@@ -75,6 +75,7 @@ from zipline.testing import (
     product_upper_triangle,
 )
 from zipline.testing.fixtures import (
+    alias,
     WithAdjustmentReader,
     WithSeededRandomPipelineEngine,
     WithTradingEnvironment,
@@ -169,6 +170,8 @@ class ConstantInputTestCase(WithTradingEnvironment, ZiplineTestCase):
     asset_ids = ASSET_FINDER_EQUITY_SIDS = 1, 2, 3, 4
     START_DATE = Timestamp('2014-01-01', tz='utc')
     END_DATE = Timestamp('2014-03-01', tz='utc')
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def init_class_fixtures(cls):
@@ -768,6 +771,8 @@ class FrameInputTestCase(WithTradingEnvironment, ZiplineTestCase):
     start = START_DATE = Timestamp('2015-01-01', tz='utc')
     end = END_DATE = Timestamp('2015-01-31', tz='utc')
 
+    trading_calendar = alias('nyse_calendar')
+
     @classmethod
     def init_class_fixtures(cls):
         super(FrameInputTestCase, cls).init_class_fixtures()
@@ -872,6 +877,8 @@ class SyntheticBcolzTestCase(WithAdjustmentReader,
     first_asset_start = Timestamp('2015-04-01', tz='UTC')
     START_DATE = Timestamp('2015-01-01', tz='utc')
     END_DATE = Timestamp('2015-08-01', tz='utc')
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def make_equity_info(cls):
@@ -1027,6 +1034,8 @@ class ParameterizedFactorTestCase(WithTradingEnvironment, ZiplineTestCase):
     sids = ASSET_FINDER_EQUITY_SIDS = Int64Index([1, 2, 3])
     START_DATE = Timestamp('2015-01-31', tz='UTC')
     END_DATE = Timestamp('2015-03-01', tz='UTC')
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def init_class_fixtures(cls):
@@ -1228,6 +1237,8 @@ class ParameterizedFactorTestCase(WithTradingEnvironment, ZiplineTestCase):
 
 class StringColumnTestCase(WithSeededRandomPipelineEngine,
                            ZiplineTestCase):
+
+    trading_days = alias('nyse_sessions')
 
     def test_string_classifiers_produce_categoricals(self):
         """

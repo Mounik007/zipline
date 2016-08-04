@@ -10,6 +10,7 @@ from zipline.utils.numpy_utils import (
     categorical_dtype,
     int64_dtype,
 )
+from zipline.testing.fixtures import alias
 
 from .base import BasePipelineTestCase
 
@@ -19,6 +20,8 @@ unicode_dtype = np.dtype('U3')
 
 
 class ClassifierTestCase(BasePipelineTestCase):
+
+    trading_calendar = alias('nyse_calendar')
 
     @parameter_space(mv=[-1, 0, 1, 999])
     def test_integral_isnull(self, mv):

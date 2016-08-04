@@ -367,7 +367,7 @@ class WithAssetFinder(WithDefaultDateBounds):
 
 class WithTradingCalendars(object):
     """
-    ZiplineTestCase mixing providing cls.trading_calendar,
+    ZiplineTestCase mixin providing cls.trading_calendar,
     cls.all_trading_calendars, cls.trading_calendar_for_asset_type as a
     class-level fixture.
 
@@ -391,15 +391,22 @@ class WithTradingCalendars(object):
     @classmethod
     def init_class_fixtures(cls):
         super(WithTradingCalendars, cls).init_class_fixtures()
+
+        cls.trading_calendars = {}
+
         for cal_str in cls.TRADING_CALENDAR_STRS:
+            # Set name to allow aliasing.
+            calendar = get_calendar(cal_str)
             setattr(cls,
-                    '{0}_calendar'.format(cal_str.lower()),
-                    get_calendar(cal_str))
+                    '{0}_calendar'.format(cal_str.lower()), calendar)
+            cls.trading_calendars[cal_str] = calendar
         for asset_type, cal_str in iteritems(
                 cls.TRADING_CALENDAR_FOR_ASSET_TYPE):
+            calendar = get_calendar(cal_str)
             setattr(cls,
                     '{0}_calendar'.format(asset_type),
-                    get_calendar(cal_str))
+                    calendar)
+            cls.trading_calendars[asset_type] = calendar
 
 
 class WithTradingEnvironment(WithAssetFinder, WithTradingCalendars):
@@ -541,13 +548,16 @@ class WithTradingSessions(WithTradingCalendars):
 
         cls.trading_sessions = {}
 
-        for cal_str, trading_calendar in iteritems(cls.all_trading_calendars):
+        for name, trading_calendar in iteritems(cls.trading_calendars):
             all_sessions = trading_calendar.all_sessions
             start_loc = all_sessions.get_loc(cls.DATA_MIN_DAY, 'bfill')
             end_loc = all_sessions.get_loc(cls.DATA_MAX_DAY, 'ffill')
 
-            cls.trading_sessions[cal_str] = all_sessions[
-                start_loc:end_loc + 1]
+            sessions = all_sessions[start_loc:end_loc + 1]
+            # Set name for aliasing.
+            setattr(cls,
+                    '{0}_sessions'.format(name.lower()), sessions)
+            cls.trading_sessions[name] = sessions
 
 
 class WithTmpDir(object):
