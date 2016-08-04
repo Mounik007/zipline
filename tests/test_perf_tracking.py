@@ -53,11 +53,12 @@ from zipline.testing import (
     tmp_trading_env,
 )
 from zipline.testing.fixtures import (
+    alias,
     WithInstanceTmpDir,
     WithSimParams,
     WithTmpDir,
     WithTradingEnvironment,
-    WithTradingCalendar,
+    WithTradingCalendars,
     ZiplineTestCase,
 )
 from zipline.utils.calendars import get_calendar
@@ -272,6 +273,8 @@ class TestSplitPerformance(WithSimParams, WithTmpDir, ZiplineTestCase):
 
     ASSET_FINDER_EQUITY_SIDS = 1, 2
 
+    trading_calendar = alias('nyse_calendar')
+
     @classmethod
     def init_class_fixtures(cls):
         super(TestSplitPerformance, cls).init_class_fixtures()
@@ -410,6 +413,8 @@ class TestDividendPerformance(WithSimParams,
     END_DATE = pd.Timestamp('2006-01-10', tz='utc')
     ASSET_FINDER_EQUITY_SIDS = 1, 2
     SIM_PARAMS_CAPITAL_BASE = 10e3
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def init_class_fixtures(cls):
@@ -1031,8 +1036,11 @@ class TestDividendPerformanceHolidayStyle(TestDividendPerformance):
     END_DATE = pd.Timestamp('2003-12-08', tz='utc')
 
 
-class TestPositionPerformance(WithInstanceTmpDir, WithTradingCalendar,
+class TestPositionPerformance(WithInstanceTmpDir, WithTradingCalendars,
                               ZiplineTestCase):
+
+    trading_calendar = alias('nyse_calendar')
+
     def create_environment_stuff(self,
                                  num_days=4,
                                  sids=[1, 2],
@@ -2341,6 +2349,8 @@ class TestPositionTracker(WithTradingEnvironment,
                           WithInstanceTmpDir,
                           ZiplineTestCase):
     ASSET_FINDER_EQUITY_SIDS = 1, 2
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def make_futures_info(cls):
