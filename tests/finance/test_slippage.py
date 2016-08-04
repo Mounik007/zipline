@@ -34,6 +34,7 @@ from zipline.data.data_portal import DataPortal
 from zipline.protocol import BarData
 from zipline.testing import tmp_bcolz_equity_minute_bar_reader
 from zipline.testing.fixtures import (
+    alias,
     WithDataPortal,
     WithSimParams,
     ZiplineTestCase,
@@ -55,6 +56,8 @@ class SlippageTestCase(WithSimParams, WithDataPortal, ZiplineTestCase):
         end=END_DATE - pd.Timedelta('1 minute'),
         freq='1min'
     )
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def make_equity_minute_bar_data(cls):

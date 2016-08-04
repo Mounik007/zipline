@@ -381,30 +381,25 @@ class WithTradingCalendars(object):
     ----------
     TRADING_CALENDAR_STRS : iterable
         iterable of identifiers of the calendars to use.
-    TRADING_CALENDAR_MASTER_STR : str
-        The trading calendar to assign to `trading_calendar`.
     TRADING_CALENDAR_FOR_ASSET_TYPE : dict
         A dictionay which maps asset type names to the calendar associated
         with that asset type.
     """
     TRADING_CALENDAR_STRS = ('NYSE',)
-    TRADING_CALENDAR_MASTER_STR = 'NYSE'
     TRADING_CALENDAR_FOR_ASSET_TYPE = {'equities': 'NYSE'}
 
     @classmethod
     def init_class_fixtures(cls):
         super(WithTradingCalendars, cls).init_class_fixtures()
-        cls.trading_calendars = {
-            cal_str: get_calendar(cal_str)
-            for cal_str in cls.TRADING_CALENDAR_STRS
-        }
-        cls.trading_calendar = cls.trading_calendars[
-            cls.TRADING_CALENDAR_MASTER_STR]
-        cls.trading_calendar_for_asset_type = {
-            asset_type: cls.trading_calendars[cal_str]
-            for asset_type, cal_str in iteritems(
-                cls.TRADING_CALENDAR_FOR_ASSET_TYPE)
-        }
+        for cal_str in cls.TRADING_CALENDAR_STRS:
+            setattr(cls,
+                    '{0}_calendar'.format(cal_str.lower()),
+                    get_calendar(cal_str))
+        for asset_type, cal_str in iteritems(
+                cls.TRADING_CALENDAR_FOR_ASSET_TYPE):
+            setattr(cls,
+                    '{0}_calendar'.format(asset_type),
+                    get_calendar(cal_str))
 
 
 class WithTradingEnvironment(WithAssetFinder, WithTradingCalendars):
@@ -844,7 +839,7 @@ class WithEquityMinuteBarData(WithTradingEnvironment):
 
     @classmethod
     def make_equity_minute_bar_data(cls):
-        trading_calendar = cls.trading_calendar_for_asset_type['equity']
+        trading_calendar = cls.equities_calendar
         return create_minute_bar_data(
             trading_calendar.minutes_for_sessions_in_range(
                 cls.equity_minute_bar_days[0],
@@ -856,21 +851,20 @@ class WithEquityMinuteBarData(WithTradingEnvironment):
     @classmethod
     def init_class_fixtures(cls):
         super(WithEquityMinuteBarData, cls).init_class_fixtures()
-        trading_calendar = cls.trading_calendar_for_asset_type['equity']
         if cls.EQUITY_MINUTE_BAR_USE_FULL_CALENDAR:
-            days = trading_calendar.all_execution_days
+            days = cls.equites_calendar.all_execution_days
         else:
-            first_session = trading_calendar.minute_to_session_label(
+            first_session = cls.equities_calendar.minute_to_session_label(
                 pd.Timestamp(cls.EQUITY_MINUTE_BAR_START_DATE)
             )
 
             if cls.EQUITY_MINUTE_BAR_LOOKBACK_DAYS > 0:
-                first_session = trading_calendar.sessions_window(
+                first_session = cls.equities_calendar.sessions_window(
                     first_session,
                     -1 * cls.EQUITY_MINUTE_BAR_LOOKBACK_DAYS
                 )[0]
 
-            days = trading_calendar.sessions_in_range(
+            days = cls.equities_calendar.sessions_in_range(
                 first_session,
                 cls.EQUITY_MINUTE_BAR_END_DATE
             )
