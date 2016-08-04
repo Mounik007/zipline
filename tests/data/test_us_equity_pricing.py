@@ -42,6 +42,7 @@ from zipline.pipeline.loaders.synthetic import (
 )
 from zipline.testing import seconds_to_timestamp
 from zipline.testing.fixtures import (
+    alias,
     WithBcolzEquityDailyBarReader,
     ZiplineTestCase,
 )
@@ -82,6 +83,8 @@ TEST_QUERY_ASSETS = EQUITY_INFO.index
 class BcolzDailyBarTestCase(WithBcolzEquityDailyBarReader, ZiplineTestCase):
     EQUITY_DAILY_BAR_START_DATE = TEST_CALENDAR_START
     EQUITY_DAILY_BAR_END_DATE = TEST_CALENDAR_STOP
+
+    trading_calendar = alias('equities_calendar')
 
     @classmethod
     def make_equity_info(cls):

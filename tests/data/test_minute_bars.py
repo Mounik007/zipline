@@ -44,6 +44,7 @@ from zipline.data.minute_bars import (
 )
 
 from zipline.testing.fixtures import (
+    alias,
     WithInstanceTmpDir,
     WithTradingCalendars,
     ZiplineTestCase,
@@ -59,6 +60,8 @@ TEST_CALENDAR_STOP = Timestamp('2015-12-31', tz='UTC')
 class BcolzMinuteBarTestCase(WithTradingCalendars,
                              WithInstanceTmpDir,
                              ZiplineTestCase):
+
+    trading_calendar = alias('equities_calendar')
 
     @classmethod
     def init_class_fixtures(cls):
