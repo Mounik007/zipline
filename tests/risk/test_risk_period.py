@@ -26,7 +26,11 @@ import zipline.finance.risk as risk
 from zipline.utils import factory
 
 from zipline.finance.trading import SimulationParameters
-from zipline.testing.fixtures import WithTradingEnvironment, ZiplineTestCase
+from zipline.testing.fixtures import (
+    alias,
+    WithTradingEnvironment,
+    ZiplineTestCase
+)
 from . import answer_key
 from . answer_key import AnswerKey
 
@@ -36,6 +40,8 @@ RETURNS = ANSWER_KEY.RETURNS
 
 
 class TestRisk(WithTradingEnvironment, ZiplineTestCase):
+
+    trading_calendar = alias('nyse_calendar')
 
     def init_instance_fixtures(self):
         super(TestRisk, self).init_instance_fixtures()
