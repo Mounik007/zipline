@@ -381,11 +381,14 @@ class WithTradingCalendars(object):
     ----------
     TRADING_CALENDAR_STRS : iterable
         iterable of identifiers of the calendars to use.
+    TRADING_CALENDAR_MASTER_STR : str
+        The trading calendar to assign to `trading_calendar`.
     TRADING_CALENDAR_FOR_ASSET_TYPE : dict
         A dictionay which maps asset type names to the calendar associated
         with that asset type.
     """
     TRADING_CALENDAR_STRS = ('NYSE',)
+    TRADING_CALENDAR_MASTER_STR = 'NYSE'
     TRADING_CALENDAR_FOR_ASSET_TYPE = {'equities': 'NYSE'}
 
     @classmethod
@@ -404,7 +407,7 @@ class WithTradingCalendars(object):
         }
 
 
-class WithTradingEnvironment(WithAssetFinder, WithTradingCalendar):
+class WithTradingEnvironment(WithAssetFinder, WithTradingCalendars):
     """
     ZiplineTestCase mixin providing cls.env as a class-level fixture.
 
