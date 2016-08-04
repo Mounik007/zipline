@@ -365,7 +365,7 @@ class WithAssetFinder(WithDefaultDateBounds):
         cls.asset_finder = cls.make_asset_finder()
 
 
-class WithTradingCalendar(object):
+class WithTradingCalendars(object):
     """
     ZiplineTestCase mixing providing cls.trading_calendar,
     cls.all_trading_calendars, cls.trading_calendar_for_asset_type as a
@@ -381,27 +381,24 @@ class WithTradingCalendar(object):
     ----------
     TRADING_CALENDAR_STRS : iterable
         iterable of identifiers of the calendars to use.
-    TRADING_CALENDAR_MASTER_STR : str
-        The trading calendar to assign to `trading_calendar`.
     TRADING_CALENDAR_FOR_ASSET_TYPE : dict
         A dictionay which maps asset type names to the calendar associated
         with that asset type.
     """
     TRADING_CALENDAR_STRS = ('NYSE',)
-    TRADING_CALENDAR_MASTER_STR = 'NYSE'
-    TRADING_CALENDAR_FOR_ASSET_TYPE = {'equity': 'NYSE'}
+    TRADING_CALENDAR_FOR_ASSET_TYPE = {'equities': 'NYSE'}
 
     @classmethod
     def init_class_fixtures(cls):
-        super(WithTradingCalendar, cls).init_class_fixtures()
-        cls.all_trading_calendars = {
+        super(WithTradingCalendars, cls).init_class_fixtures()
+        cls.trading_calendars = {
             cal_str: get_calendar(cal_str)
             for cal_str in cls.TRADING_CALENDAR_STRS
         }
-        cls.trading_calendar = cls.all_trading_calendars[
+        cls.trading_calendar = cls.trading_calendars[
             cls.TRADING_CALENDAR_MASTER_STR]
         cls.trading_calendar_for_asset_type = {
-            asset_type: cls.all_trading_calendars[cal_str]
+            asset_type: cls.trading_calendars[cal_str]
             for asset_type, cal_str in iteritems(
                 cls.TRADING_CALENDAR_FOR_ASSET_TYPE)
         }
@@ -514,7 +511,7 @@ class WithSimParams(WithTradingEnvironment):
         cls.sim_params = cls.make_simparams()
 
 
-class WithTradingSessions(WithTradingCalendar):
+class WithTradingSessions(WithTradingCalendars):
     """
     ZiplineTestCase mixin providing cls.trading_days, cls.all_trading_sessions
     as a class-level fixture.
@@ -544,20 +541,15 @@ class WithTradingSessions(WithTradingCalendar):
     def init_class_fixtures(cls):
         super(WithTradingSessions, cls).init_class_fixtures()
 
-        cls.all_trading_sessions = {}
+        cls.trading_sessions = {}
 
         for cal_str, trading_calendar in iteritems(cls.all_trading_calendars):
             all_sessions = trading_calendar.all_sessions
             start_loc = all_sessions.get_loc(cls.DATA_MIN_DAY, 'bfill')
             end_loc = all_sessions.get_loc(cls.DATA_MAX_DAY, 'ffill')
 
-            cls.all_trading_sessions[cal_str] = all_sessions[
+            cls.trading_sessions[cal_str] = all_sessions[
                 start_loc:end_loc + 1]
-        # For backwards compatibility, assign `trading_days` which is now
-        # more accurately described as 'NYSE trading session labels', since
-        # no tests yet assign this as a value other than 'NYSE'.
-        cls.trading_days = cls.all_trading_sessions[
-            cls.TRADING_CALENDAR_MASTER_STR]
 
 
 class WithTmpDir(object):
