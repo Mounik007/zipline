@@ -30,6 +30,7 @@ from zipline.testing import (
     parameter_space,
 )
 from zipline.testing.fixtures import (
+    alias,
     WithSeededRandomPipelineEngine,
     ZiplineTestCase,
 )
@@ -40,6 +41,8 @@ class SliceTestCase(WithSeededRandomPipelineEngine, ZiplineTestCase):
     sids = ASSET_FINDER_EQUITY_SIDS = Int64Index([1, 2, 3])
     START_DATE = Timestamp('2015-01-31', tz='UTC')
     END_DATE = Timestamp('2015-03-01', tz='UTC')
+
+    trading_days = alias('nyse_sessions')
 
     @classmethod
     def init_class_fixtures(cls):
