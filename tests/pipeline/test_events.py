@@ -26,6 +26,7 @@ from zipline.pipeline.loaders.utils import (
 )
 from zipline.testing import check_arrays, ZiplineTestCase
 from zipline.testing.fixtures import (
+    alias,
     WithAssetFinder,
     WithTradingSessions,
 )
@@ -274,6 +275,8 @@ class EventsLoaderTestCase(WithAssetFinder,
     START_DATE = pd.Timestamp('2014-01-01')
     END_DATE = pd.Timestamp('2014-01-30')
 
+    trading_days = alias('nyse_sessions')
+
     @classmethod
     def init_class_fixtures(cls):
         # This is a rare case where we actually want to do work **before** we
@@ -452,6 +455,7 @@ class BlazeEventsLoaderTestCase(EventsLoaderTestCase):
     """
     Run the same tests as EventsLoaderTestCase, but using a BlazeEventsLoader.
     """
+    trading_days = alias('nyse_sessions')
 
     @classmethod
     def make_loader(cls, events, next_value_columns, previous_value_columns):

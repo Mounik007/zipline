@@ -56,6 +56,7 @@ from zipline.testing import (
     FakeDataPortal,
 )
 from zipline.testing.fixtures import (
+    alias,
     WithAdjustmentReader,
     WithBcolzEquityDailyBarReaderFromCSVs,
     WithDataPortal,
@@ -89,6 +90,8 @@ class ClosesOnly(WithDataPortal, ZiplineTestCase):
     END_DATE = pd.Timestamp('2014-02-01', tz='utc')
     dates = date_range(START_DATE, END_DATE, freq=get_calendar("NYSE").day,
                        tz='utc')
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def make_equity_info(cls):
@@ -350,6 +353,9 @@ class PipelineAlgorithmTestCase(WithBcolzEquityDailyBarReaderFromCSVs,
     ASSET_FINDER_EQUITY_SYMBOLS = 'AAPL', 'MSFT', 'BRK_A'
     START_DATE = Timestamp('2014')
     END_DATE = Timestamp('2015')
+
+    trading_calendar = alias('nyse_calendar')
+    trading_days = alias('nyse_sessions')
 
     @classmethod
     def make_equity_daily_bar_data(cls):

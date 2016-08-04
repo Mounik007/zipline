@@ -17,7 +17,11 @@ from zipline.testing import (
     ExplodingObject,
     tmp_asset_finder,
 )
-from zipline.testing.fixtures import ZiplineTestCase, WithTradingCalendars
+from zipline.testing.fixtures import (
+    alias,
+    WithTradingCalendars,
+    ZiplineTestCase,
+)
 
 from zipline.utils.functional import dzip_exact
 from zipline.utils.pandas_utils import explode
@@ -51,6 +55,8 @@ with_default_shape = with_defaults(shape=lambda self: self.default_shape)
 
 
 class BasePipelineTestCase(WithTradingCalendars, ZiplineTestCase):
+
+    trading_calendar = alias('nyse_calendar')
 
     @classmethod
     def init_class_fixtures(cls):
